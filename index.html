@@ -9,14 +9,15 @@
       font-family: Arial, sans-serif;
       padding: 20px;
     }
-    .event-card {
-      background-color: #e7ec9a;
-      border: 1px solid #a6ac55;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      max-width: 400px;
-    }
+   .event-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin: 10px 0;
+  border-radius: 8px;
+  max-width: 400px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
+
     button {
       padding: 8px 12px;
       font-size: 1rem;
@@ -27,12 +28,7 @@
 <body>
   <h1>Local Community Event Portal</h1>
 
-  <div class="event-card">
-    <h2 id="eventName"></h2>
-    <p><strong>Date:</strong> <span id="eventDate"></span></p>
-    <p><strong>Available Seats:</strong> <span id="seatCount"></span></p>
-    <button onclick="registerUser()">Register</button>
-  </div>
+  <div id="eventsContainer"></div>
 
   <script src="main.js"></script>
 </body>

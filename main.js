@@ -1,77 +1,81 @@
-// --- Task 1: Console & Alert ---
-console.log("Welcome to the Community Portal");
-window.addEventListener("load", () => {
-  alert("Page has fully loaded. Enjoy browsing community events!");
-});
+// --- Data: Event List ---
+let events = [
+  { id: 1, name: "Music Fiesta", date: "2025-06-15", seats: 10, category: "Music" },
+  { id: 2, name: "Yoga Morning", date: "2025-07-01", seats: 15, category: "Health" },
+  { id: 3, name: "Tech Meetup", date: "2025-08-20", seats: 20, category: "Technology" },
+  { id: 4, name: "Painting Workshop", date: "2025-09-05", seats: 8, category: "Art" },
+];
 
-// --- Task 2: Event Info and Seat Management ---
-const eventName = "Music Fiesta";
-const eventDate = "2025-06-15";
-let availableSeats = 50;
+// --- Closure: Track registrations per category ---
+function createCategoryTracker() {
+  const categoryCount = {};
+  return function (category) {
+    if (!categoryCount[category]) {
+      categoryCount[category] = 0;
+    }
+    categoryCount[category]++;
+    console.log(`Registrations for ${category}: ${categoryCount[category]}`);
+  };
+}
+const trackRegistration = createCategoryTracker();
 
-// Display data in HTML
-document.getElementById("eventName").textContent = eventName;
-document.getElementById("eventDate").textContent = eventDate;
-document.getElementById("seatCount").textContent = availableSeats;
+// --- Reusable Function: Add New Event ---
+function addEvent(name, date, seats, category) {
+  const newEvent = {
+    id: events.length + 1,
+    name,
+    date,
+    seats,
+    category,
+  };
+  events.push(newEvent);
+  console.log(`Event '${name}' added successfully.`);
+}
 
-// Register function
-function registerUser() {
-  if (availableSeats > 0) {
-    availableSeats--;
-    document.getElementById("seatCount").textContent = availableSeats;
-    alert("You have successfully registered!");
+// --- Reusable Function: Register a User ---
+function registerUser(eventId) {
+  const event = events.find((e) => e.id === eventId);
+  if (!event) return alert("Event not found");
+
+  if (event.seats > 0) {
+    event.seats--;
+    document.getElementById(`seat-${event.id}`).textContent = event.seats;
+    alert(`Registered for ${event.name}`);
+    trackRegistration(event.category);
   } else {
-    alert("Sorry, no seats available!");
+    alert("No seats available");
   }
 }
 
-// --- Task 3: Event Filtering, Looping, Error Handling ---
-
-const events = [
-  { name: "Music Fiesta", date: "2025-06-15", seats: 10 },
-  { name: "Yoga Morning", date: "2025-10-10", seats: 0 },
-  { name: "Tech Meetup", date: "2025-08-20", seats: 25 },
-  { name: "Art Workshop", date: "2024-12-10", seats: 5 }, // Past event
-];
-
-// Utility: Check if event is in the future and has seats
-function isValidEvent(event) {
-  const today = new Date();
-  const eventDate = new Date(event.date);
-  return eventDate > today && event.seats > 0;
+// --- Higher-Order Function: Filter Events by Custom Callback ---
+function filterEvents(callback) {
+  return events.filter(callback);
 }
 
-// Render valid events
-const container = document.createElement("div");
-document.body.appendChild(container);
+// --- Example: Filter by Category (e.g., Music) ---
+const musicEvents = filterEvents((event) => event.category === "Music");
+console.log("Music Events:", musicEvents);
 
-events.forEach((event, index) => {
-  if (isValidEvent(event)) {
+// --- Render Events ---
+function renderEvents(eventList) {
+  const container = document.getElementById("eventsContainer");
+  container.innerHTML = ""; // clear previous
+
+  eventList.forEach((event) => {
     const card = document.createElement("div");
     card.className = "event-card";
     card.innerHTML = `
       <h3>${event.name}</h3>
       <p><strong>Date:</strong> ${event.date}</p>
-      <p><strong>Seats:</strong> <span id="seat-${index}">${event.seats}</span></p>
-      <button onclick="tryRegister(${index})">Register</button>
+      <p><strong>Category:</strong> ${event.category}</p>
+      <p><strong>Seats:</strong> <span id="seat-${event.id}">${event.seats}</span></p>
+      <button onclick="registerUser(${event.id})">Register</button>
     `;
     container.appendChild(card);
-  }
-});
-
-// Safe registration with error handling
-function tryRegister(index) {
-  try {
-    const event = events[index];
-    if (event.seats > 0) {
-      event.seats--;
-      document.getElementById(`seat-${index}`).textContent = event.seats;
-      alert(`Successfully registered for ${event.name}`);
-    } else {
-      throw new Error("No seats available.");
-    }
-  } catch (error) {
-    console.error("Registration failed:", error.message);
-    alert("Error: " + error.message);
-  }
+  });
 }
+
+// --- Initial Render ---
+window.onload = function () {
+  renderEvents(events);
+};
