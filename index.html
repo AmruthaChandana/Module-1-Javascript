@@ -2,13 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Community Event Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .event-card {
+      background-color: #e7ec9a;
+      border: 1px solid #a6ac55;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      max-width: 400px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to the Local Community Event Portal</h1>
+  <h1>Local Community Event Portal</h1>
 
-  <!-- Link JavaScript File -->
+  <div class="event-card">
+    <h2 id="eventName"></h2>
+    <p><strong>Date:</strong> <span id="eventDate"></span></p>
+    <p><strong>Available Seats:</strong> <span id="seatCount"></span></p>
+    <button onclick="registerUser()">Register</button>
+  </div>
+
   <script src="main.js"></script>
 </body>
 </html>
