@@ -1,81 +1,101 @@
-// --- Data: Event List ---
-let events = [
-  { id: 1, name: "Music Fiesta", date: "2025-06-15", seats: 10, category: "Music" },
-  { id: 2, name: "Yoga Morning", date: "2025-07-01", seats: 15, category: "Health" },
-  { id: 3, name: "Tech Meetup", date: "2025-08-20", seats: 20, category: "Technology" },
-  { id: 4, name: "Painting Workshop", date: "2025-09-05", seats: 8, category: "Art" },
+// Sample list of events
+const events = [
+  {
+    name: "Music Fiesta",
+    date: "2025-06-15",
+    category: "Music",
+    seats: 10
+  },
+  {
+    name: "Yoga Morning",
+    date: "2025-07-01",
+    category: "Health",
+    seats: 15
+  },
+  {
+    name: "Tech Meetup",
+    date: "2025-08-20",
+    category: "Technology",
+    seats: 20
+  },
+  {
+    name: "Painting Workshop",
+    date: "2025-09-05",
+    category: "Art",
+    seats: 8
+  }
 ];
 
-// --- Closure: Track registrations per category ---
-function createCategoryTracker() {
-  const categoryCount = {};
-  return function (category) {
-    if (!categoryCount[category]) {
-      categoryCount[category] = 0;
+// Function to render events on the page
+function renderEvents() {
+  const container = document.getElementById('eventsContainer');
+  container.innerHTML = '';
+
+  events.forEach(eventItem => {
+    const card = document.createElement('div');
+    card.className = 'event-card';
+    
+    card.innerHTML = `
+      <h3>${eventItem.name}</h3>
+      <p><strong>Date:</strong> ${eventItem.date}</p>
+      <p><strong>Category:</strong> ${eventItem.category}</p>
+      <p><strong>Seats:</strong> ${eventItem.seats}</p>
+    `;
+
+    const registerBtn = document.createElement('button');
+    registerBtn.textContent = "Register";
+    registerBtn.addEventListener('click', () => {
+      registerForEvent(eventItem);
+    });
+
+    card.appendChild(registerBtn);
+    container.appendChild(card);
+  });
+
+  displayRegisteredEvents();
+}
+
+// Function to handle registration and update localStorage
+function registerForEvent(eventItem) {
+  if (eventItem.seats > 0) {
+    eventItem.seats--;
+
+    // Get existing registrations
+    let registered = JSON.parse(localStorage.getItem('registeredEvents')) || [];
+
+    // Add event if not already registered
+    if (!registered.includes(eventItem.name)) {
+      registered.push(eventItem.name);
+      localStorage.setItem('registeredEvents', JSON.stringify(registered));
     }
-    categoryCount[category]++;
-    console.log(`Registrations for ${category}: ${categoryCount[category]}`);
-  };
-}
-const trackRegistration = createCategoryTracker();
 
-// --- Reusable Function: Add New Event ---
-function addEvent(name, date, seats, category) {
-  const newEvent = {
-    id: events.length + 1,
-    name,
-    date,
-    seats,
-    category,
-  };
-  events.push(newEvent);
-  console.log(`Event '${name}' added successfully.`);
-}
-
-// --- Reusable Function: Register a User ---
-function registerUser(eventId) {
-  const event = events.find((e) => e.id === eventId);
-  if (!event) return alert("Event not found");
-
-  if (event.seats > 0) {
-    event.seats--;
-    document.getElementById(`seat-${event.id}`).textContent = event.seats;
-    alert(`Registered for ${event.name}`);
-    trackRegistration(event.category);
+    alert(`Registered for ${eventItem.name}!`);
+    renderEvents(); // Re-render to update seat count and list
   } else {
-    alert("No seats available");
+    alert("No seats available for this event.");
   }
 }
 
-// --- Higher-Order Function: Filter Events by Custom Callback ---
-function filterEvents(callback) {
-  return events.filter(callback);
-}
+// Function to display user's registered events
+function displayRegisteredEvents() {
+  const list = document.getElementById('myEventsList');
+  list.innerHTML = '';
 
-// --- Example: Filter by Category (e.g., Music) ---
-const musicEvents = filterEvents((event) => event.category === "Music");
-console.log("Music Events:", musicEvents);
+  const registered = JSON.parse(localStorage.getItem('registeredEvents')) || [];
 
-// --- Render Events ---
-function renderEvents(eventList) {
-  const container = document.getElementById("eventsContainer");
-  container.innerHTML = ""; // clear previous
+  if (registered.length === 0) {
+    list.innerHTML = '<li>No events registered yet.</li>';
+    return;
+  }
 
-  eventList.forEach((event) => {
-    const card = document.createElement("div");
-    card.className = "event-card";
-    card.innerHTML = `
-      <h3>${event.name}</h3>
-      <p><strong>Date:</strong> ${event.date}</p>
-      <p><strong>Category:</strong> ${event.category}</p>
-      <p><strong>Seats:</strong> <span id="seat-${event.id}">${event.seats}</span></p>
-      <button onclick="registerUser(${event.id})">Register</button>
-    `;
-    container.appendChild(card);
+  registered.forEach(eventName => {
+    const li = document.createElement('li');
+    li.textContent = eventName;
+    list.appendChild(li);
   });
 }
 
-// --- Initial Render ---
-window.onload = function () {
-  renderEvents(events);
-};
+// Initial call on page load
+document.addEventListener('DOMContentLoaded', () => {
+  renderEvents();
+});
