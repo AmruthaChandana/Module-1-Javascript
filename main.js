@@ -1,4 +1,4 @@
-// Sample list of events
+// Initial list of events
 const events = [
   {
     name: "Music Fiesta",
@@ -26,15 +26,34 @@ const events = [
   }
 ];
 
-// Function to render events on the page
-function renderEvents() {
+// ✅ 1. Add new event using .push()
+events.push({
+  name: "Baking Basics",
+  date: "2025-10-01",
+  category: "Music",
+  seats: 12
+});
+
+// ✅ 2. Filter only Music events
+const musicEvents = events.filter(event => event.category === "Music");
+
+// ✅ 3. Format names using .map()
+const formattedEvents = events.map(event => {
+  return {
+    ...event,
+    name: `Workshop on ${event.name}`
+  };
+});
+
+// 🔁 Render Events (all or filtered/formatted)
+function renderEvents(data = formattedEvents) {
   const container = document.getElementById('eventsContainer');
   container.innerHTML = '';
 
-  events.forEach(eventItem => {
+  data.forEach(eventItem => {
     const card = document.createElement('div');
     card.className = 'event-card';
-    
+
     card.innerHTML = `
       <h3>${eventItem.name}</h3>
       <p><strong>Date:</strong> ${eventItem.date}</p>
@@ -45,7 +64,7 @@ function renderEvents() {
     const registerBtn = document.createElement('button');
     registerBtn.textContent = "Register";
     registerBtn.addEventListener('click', () => {
-      registerForEvent(eventItem);
+      registerForEvent(eventItem.name);
     });
 
     card.appendChild(registerBtn);
@@ -55,28 +74,28 @@ function renderEvents() {
   displayRegisteredEvents();
 }
 
-// Function to handle registration and update localStorage
-function registerForEvent(eventItem) {
-  if (eventItem.seats > 0) {
+// 🟡 Registration logic by event name
+function registerForEvent(eventName) {
+  const eventItem = events.find(e => `Workshop on ${e.name}` === eventName || e.name === eventName);
+
+  if (eventItem && eventItem.seats > 0) {
     eventItem.seats--;
 
-    // Get existing registrations
     let registered = JSON.parse(localStorage.getItem('registeredEvents')) || [];
 
-    // Add event if not already registered
     if (!registered.includes(eventItem.name)) {
       registered.push(eventItem.name);
       localStorage.setItem('registeredEvents', JSON.stringify(registered));
     }
 
     alert(`Registered for ${eventItem.name}!`);
-    renderEvents(); // Re-render to update seat count and list
+    renderEvents(); // re-render
   } else {
     alert("No seats available for this event.");
   }
 }
 
-// Function to display user's registered events
+// ✅ Show registered events
 function displayRegisteredEvents() {
   const list = document.getElementById('myEventsList');
   list.innerHTML = '';
@@ -95,7 +114,8 @@ function displayRegisteredEvents() {
   });
 }
 
-// Initial call on page load
+// Initial render
 document.addEventListener('DOMContentLoaded', () => {
   renderEvents();
 });
+
