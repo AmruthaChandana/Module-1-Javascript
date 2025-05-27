@@ -9,30 +9,41 @@
 <body>
   <h1>Local Community Event Portal</h1>
 
-<!-- Event Input Form -->
-<h2>Add New Event</h2>
-<form id="addEventForm" class="event-form">
-  <input type="text" id="eventName" placeholder="Event Name" required />
-  <input type="date" id="eventDate" required />
-  <input type="text" id="eventCategory" placeholder="Category" required />
-  <input type="number" id="eventSeats" placeholder="Available Seats" min="1" required />
-  <button type="submit">Add Event</button>
-</form>
+  <!-- Event Input Form -->
+  <h2>Add New Event</h2>
+  <form id="addEventForm" class="event-form">
+    <input type="text" id="eventName" placeholder="Event Name" required />
+    <input type="date" id="eventDate" required />
+    <input type="text" id="eventCategory" placeholder="Category" required />
+    <input type="number" id="eventSeats" placeholder="Available Seats" min="1" required />
+    <button type="submit">Add Event</button>
+  </form>
 
-<!-- Filter Buttons -->
-<div class="filter-buttons">
-  <button id="filterMusic">Show Only Music Events</button>
-  <button id="showAll">Show All Events</button>
-</div>
+  <!-- Filter Buttons and Controls -->
+  <div class="filter-buttons">
+    <button id="filterMusic">Show Only Music Events</button>
+    <button id="showAll">Show All Events</button>
+    
+    <!-- Category Filter Dropdown -->
+    <select id="categoryFilter">
+      <option value="">-- Filter by Category --</option>
+      <option value="Music">Music</option>
+      <option value="Health">Health</option>
+      <option value="Technology">Technology</option>
+      <option value="Art">Art</option>
+    </select>
 
-<!-- Event Display Section -->
-<h2>All Events</h2>
-<div id="eventsContainer" class="event-container"></div>
+    <!-- Search Input -->
+    <input type="text" id="searchInput" placeholder="Search event by name" />
+  </div>
 
-<!-- Registered Events -->
-<div id="eventsContainer"></div>
-<h2>My Registered Events</h2>
-<ul id="myEventsList"></ul>
+  <!-- Event Display Section -->
+  <h2>All Events</h2>
+  <div id="allEvents" class="event-container"></div>
+
+  <!-- Registered Events -->
+  <h2>My Registered Events</h2>
+  <ul id="myEventsList"></ul>
 
   <script src="main.js"></script>
 </body>

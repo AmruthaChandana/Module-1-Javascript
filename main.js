@@ -7,12 +7,17 @@ const events = [
 
 let registeredEvents = [];
 
-function renderEvents(filterCategory = null) {
+function renderEvents(filterCategory = null, searchTerm = "") {
   const container = document.querySelector("#allEvents");
   container.innerHTML = "";
 
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
   events.forEach(event => {
-    if (!filterCategory || event.category === filterCategory) {
+    const matchesCategory = !filterCategory || event.category === filterCategory;
+    const matchesSearch = event.name.toLowerCase().includes(normalizedSearch);
+
+    if (matchesCategory && matchesSearch) {
       const card = document.createElement("div");
       card.className = "event-card";
 
@@ -58,7 +63,7 @@ function renderEvents(filterCategory = null) {
 }
 
 function updateMyEvents() {
-  const list = document.querySelector("#myEventsList");
+  const list = document.getElementById("myEventsList");
   list.innerHTML = "";
   registeredEvents.forEach(name => {
     const li = document.createElement("li");
@@ -68,30 +73,58 @@ function updateMyEvents() {
 }
 
 function addEvent() {
-  const name = document.querySelector("#eventName").value.trim();
-  const date = document.querySelector("#eventDate").value;
-  const category = document.querySelector("#eventCategory").value.trim();
-  const seats = parseInt(document.querySelector("#eventSeats").value);
+  const name = document.getElementById("eventName").value;
+  const date = document.getElementById("eventDate").value;
+  const category = document.getElementById("eventCategory").value;
+  const seats = parseInt(document.getElementById("eventSeats").value);
 
-  if (name && date && category && !isNaN(seats) && seats > 0) {
+  if (name && date && category && !isNaN(seats)) {
     events.push({ name, date, category, seats });
-    renderEvents();
-    // Clear form inputs after adding
-    document.querySelector("#addEventForm").reset();
-  } else {
-    alert("Please fill all fields correctly.");
+    renderEvents(currentCategoryFilter, currentSearchTerm);
   }
 }
 
-// Attach form submit handler using querySelector
-document.querySelector("#addEventForm").addEventListener("submit", e => {
-  e.preventDefault(); // Prevent page reload
+// Handle form submit to add event
+document.getElementById("addEventForm").onsubmit = (e) => {
+  e.preventDefault(); // prevent page reload
   addEvent();
+
+  // Clear form inputs after adding
+  e.target.reset();
+};
+
+// Track current filters/search
+let currentCategoryFilter = null;
+let currentSearchTerm = "";
+
+// Category dropdown onchange event
+document.querySelector("#categoryFilter").onchange = (e) => {
+  currentCategoryFilter = e.target.value || null;
+  renderEvents(currentCategoryFilter, currentSearchTerm);
+};
+
+// Search input keydown event (using input event for instant feedback)
+document.querySelector("#searchInput").addEventListener("input", (e) => {
+  currentSearchTerm = e.target.value;
+  renderEvents(currentCategoryFilter, currentSearchTerm);
 });
 
-// Filter Buttons
-document.querySelector("#filterMusic").onclick = () => renderEvents("Music");
-document.querySelector("#showAll").onclick = () => renderEvents();
+// Filter buttons onclick events
+document.querySelector("#filterMusic").onclick = () => {
+  currentCategoryFilter = "Music";
+  currentSearchTerm = "";
+  document.querySelector("#categoryFilter").value = "Music";
+  document.querySelector("#searchInput").value = "";
+  renderEvents(currentCategoryFilter, currentSearchTerm);
+};
+
+document.querySelector("#showAll").onclick = () => {
+  currentCategoryFilter = null;
+  currentSearchTerm = "";
+  document.querySelector("#categoryFilter").value = "";
+  document.querySelector("#searchInput").value = "";
+  renderEvents();
+};
 
 // Initial render
 renderEvents();
