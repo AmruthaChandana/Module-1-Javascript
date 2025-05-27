@@ -1,121 +1,98 @@
-// Initial list of events
 const events = [
-  {
-    name: "Music Fiesta",
-    date: "2025-06-15",
-    category: "Music",
-    seats: 10
-  },
-  {
-    name: "Yoga Morning",
-    date: "2025-07-01",
-    category: "Health",
-    seats: 15
-  },
-  {
-    name: "Tech Meetup",
-    date: "2025-08-20",
-    category: "Technology",
-    seats: 20
-  },
-  {
-    name: "Painting Workshop",
-    date: "2025-09-05",
-    category: "Art",
-    seats: 8
-  }
+  { name: "Music Fiesta", date: "2025-06-15", category: "Music", seats: 10 },
+  { name: "Yoga Morning", date: "2025-07-01", category: "Health", seats: 15 },
+  { name: "Tech Meetup", date: "2025-08-20", category: "Technology", seats: 20 },
+  { name: "Painting Workshop", date: "2025-09-05", category: "Art", seats: 8 }
 ];
 
-// ✅ 1. Add new event using .push()
-events.push({
-  name: "Baking Basics",
-  date: "2025-10-01",
-  category: "Music",
-  seats: 12
-});
+let registeredEvents = [];
 
-// ✅ 2. Filter only Music events
-const musicEvents = events.filter(event => event.category === "Music");
+function renderEvents(filterCategory = null) {
+  const container = document.querySelector("#allEvents");
+  container.innerHTML = "";
 
-// ✅ 3. Format names using .map()
-const formattedEvents = events.map(event => {
-  return {
-    ...event,
-    name: `Workshop on ${event.name}`
-  };
-});
+  events.forEach(event => {
+    if (!filterCategory || event.category === filterCategory) {
+      const card = document.createElement("div");
+      card.className = "event-card";
 
-// 🔁 Render Events (all or filtered/formatted)
-function renderEvents(data = formattedEvents) {
-  const container = document.getElementById('eventsContainer');
-  container.innerHTML = '';
+      const title = document.createElement("h3");
+      title.textContent = event.name;
 
-  data.forEach(eventItem => {
-    const card = document.createElement('div');
-    card.className = 'event-card';
+      const date = document.createElement("p");
+      date.innerHTML = `<strong>Date:</strong> ${event.date}`;
 
-    card.innerHTML = `
-      <h3>${eventItem.name}</h3>
-      <p><strong>Date:</strong> ${eventItem.date}</p>
-      <p><strong>Category:</strong> ${eventItem.category}</p>
-      <p><strong>Seats:</strong> ${eventItem.seats}</p>
-    `;
+      const category = document.createElement("p");
+      category.innerHTML = `<strong>Category:</strong> ${event.category}`;
 
-    const registerBtn = document.createElement('button');
-    registerBtn.textContent = "Register";
-    registerBtn.addEventListener('click', () => {
-      registerForEvent(eventItem.name);
-    });
+      const seats = document.createElement("p");
+      seats.innerHTML = `<strong>Seats:</strong> ${event.seats}`;
 
-    card.appendChild(registerBtn);
-    container.appendChild(card);
-  });
+      const registerBtn = document.createElement("button");
+      registerBtn.textContent = "Register";
+      registerBtn.onclick = () => {
+        if (!registeredEvents.includes(event.name)) {
+          registeredEvents.push(event.name);
+          updateMyEvents();
+        }
+      };
 
-  displayRegisteredEvents();
-}
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.style.marginLeft = "10px";
+      cancelBtn.onclick = () => {
+        registeredEvents = registeredEvents.filter(e => e !== event.name);
+        updateMyEvents();
+      };
 
-// 🟡 Registration logic by event name
-function registerForEvent(eventName) {
-  const eventItem = events.find(e => `Workshop on ${e.name}` === eventName || e.name === eventName);
+      card.appendChild(title);
+      card.appendChild(date);
+      card.appendChild(category);
+      card.appendChild(seats);
+      card.appendChild(registerBtn);
+      card.appendChild(cancelBtn);
 
-  if (eventItem && eventItem.seats > 0) {
-    eventItem.seats--;
-
-    let registered = JSON.parse(localStorage.getItem('registeredEvents')) || [];
-
-    if (!registered.includes(eventItem.name)) {
-      registered.push(eventItem.name);
-      localStorage.setItem('registeredEvents', JSON.stringify(registered));
+      container.appendChild(card);
     }
-
-    alert(`Registered for ${eventItem.name}!`);
-    renderEvents(); // re-render
-  } else {
-    alert("No seats available for this event.");
-  }
+  });
 }
 
-// ✅ Show registered events
-function displayRegisteredEvents() {
-  const list = document.getElementById('myEventsList');
-  list.innerHTML = '';
-
-  const registered = JSON.parse(localStorage.getItem('registeredEvents')) || [];
-
-  if (registered.length === 0) {
-    list.innerHTML = '<li>No events registered yet.</li>';
-    return;
-  }
-
-  registered.forEach(eventName => {
-    const li = document.createElement('li');
-    li.textContent = eventName;
+function updateMyEvents() {
+  const list = document.querySelector("#myEventsList");
+  list.innerHTML = "";
+  registeredEvents.forEach(name => {
+    const li = document.createElement("li");
+    li.textContent = name;
     list.appendChild(li);
   });
 }
 
-// Initial render
-document.addEventListener('DOMContentLoaded', () => {
-  renderEvents();
+function addEvent() {
+  const name = document.querySelector("#eventName").value.trim();
+  const date = document.querySelector("#eventDate").value;
+  const category = document.querySelector("#eventCategory").value.trim();
+  const seats = parseInt(document.querySelector("#eventSeats").value);
+
+  if (name && date && category && !isNaN(seats) && seats > 0) {
+    events.push({ name, date, category, seats });
+    renderEvents();
+    // Clear form inputs after adding
+    document.querySelector("#addEventForm").reset();
+  } else {
+    alert("Please fill all fields correctly.");
+  }
+}
+
+// Attach form submit handler using querySelector
+document.querySelector("#addEventForm").addEventListener("submit", e => {
+  e.preventDefault(); // Prevent page reload
+  addEvent();
 });
 
+// Filter Buttons
+document.querySelector("#filterMusic").onclick = () => renderEvents("Music");
+document.querySelector("#showAll").onclick = () => renderEvents();
+
+// Initial render
+renderEvents();
+updateMyEvents();
