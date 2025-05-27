@@ -1,0 +1,115 @@
+/* General Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+h1, h2 {
+  color: #2c3e50;
+}
+
+/* Form Styling */
+.event-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.event-form input {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.event-form button {
+  padding: 10px 15px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.event-form button:hover {
+  background-color: #2980b9;
+}
+
+/* Filter Buttons */
+.filter-buttons {
+  margin-bottom: 20px;
+}
+
+.filter-buttons button {
+  margin-right: 10px;
+  padding: 8px 12px;
+  background-color: #2ecc71;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.filter-buttons button:hover {
+  background-color: #27ae60;
+}
+
+/* Event Cards */
+.event-container {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+.event-card {
+  background-color: white;
+  border-left: 5px solid #3498db;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.event-card h3 {
+  margin-top: 0;
+  color: #34495e;
+}
+
+.event-card p {
+  margin: 5px 0;
+}
+
+.event-card button {
+  margin-top: 10px;
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.event-card button:hover {
+  background-color: #d35400;
+}
+
+/* Registered Events List */
+#myEventsList {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+#myEventsList li {
+  margin-bottom: 5px;
+}
